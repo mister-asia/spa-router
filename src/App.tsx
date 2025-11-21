@@ -1,6 +1,7 @@
 import { Router } from "@/components/Router";
-import { useParams } from "./hooks/useParams";
 import { routerHistory } from "@/core/routerHistory";
+
+import { useParams } from "./hooks/useParams";
 
 const Main = () => <div>Main</div>;
 const Login = () => <div>Login</div>;

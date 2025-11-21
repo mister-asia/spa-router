@@ -1,7 +1,8 @@
-import { useState, useEffect, ReactElement } from "react";
-import { Route } from "@/types";
-import { RouterProvider } from "@/providers/RouterProvider";
+import { ReactElement, useEffect, useState } from "react";
+
 import { routerHistory } from "@/core/routerHistory";
+import { RouterProvider } from "@/providers/RouterProvider";
+import { Route } from "@/types";
 import { resolveRoute } from "@/utils/router";
 
 type Props = {

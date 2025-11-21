@@ -1,4 +1,5 @@
 import { useContext } from "react";
+
 import { RouterContext } from "@/providers/RouterProvider";
 
 export const useParams = <T extends Record<string, string>>(): T => {
