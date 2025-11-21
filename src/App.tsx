@@ -1,6 +1,6 @@
-import {Route} from "@/types";
 import {Router} from "@/components/Router";
-import {useParams} from "@/components/RouterProvider";
+import { useParams } from "./hooks/useParams";
+import { routerHistory } from "@/core/routerHistory";
 
 const Main = () => <div>Main</div>
 const Login = () => <div>Login</div>
@@ -11,29 +11,29 @@ const User = () => {
 }
 
 const Wallet = () => {
-    const {userId, walletId} = useParams();
-    return <div>Wallet {walletId} of user {userId}</div>
+    
+    const {userId, walletId} = useParams<{userId: string, walletId: string}>();
+    
+    return <div>
+        <div>Wallet {walletId} of user {userId}</div>
+        <button onClick={() => {
+            
+            routerHistory.navigate('/user/123');
+
+        }}>Go to user 123</button>
+    </div>
 }
 
-const routes: Route[] = [
-    {
-        path: '/',
-        component: Main
-    },
-    {
-        path: '/login',
-        component: Login
-    },
-    {
-        path: '/user/:userId',
-        component: User
-    },
-    {
-        path: '/user/:userId/wallet/:walletId',
-        component: Wallet
-    },
-]
+const NotFound = () => <div>Custom 404</div>;
 
 export default function App() {
-    return <Router routes={routes}/>
+    return <Router
+        routes={[
+            { path: '/', element: <Main /> },
+            { path: '/login', element: <Login /> },
+            { path: '/user/:userId', element: <User /> },
+            { path: '/user/:userId/wallet/:walletId', element: <Wallet /> },
+        ]}
+        Fallback={<NotFound />}
+    />
 }

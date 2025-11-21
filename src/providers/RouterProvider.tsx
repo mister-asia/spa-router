@@ -17,11 +17,3 @@ export const RouterProvider = ({children, params}: Props) => {
         </RouterContext.Provider>
     );
 };
-
-export const useParams = (): Record<string, string> => {
-    const context = useContext(RouterContext);
-    if (!context) {
-        throw new Error('useParams must be used within RouterProvider');
-    }
-    return context.params;
-};
