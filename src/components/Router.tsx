@@ -1,32 +1,32 @@
 import { useState, useEffect, ReactElement } from "react";
-import {Route} from "@/types";
-import {RouterProvider} from "@/providers/RouterProvider";
+import { Route } from "@/types";
+import { RouterProvider } from "@/providers/RouterProvider";
 import { routerHistory } from "@/core/routerHistory";
-import { getRouteData } from "@/utils/router";
+import { resolveRoute } from "@/utils/router";
 
 type Props = {
-    routes: Route[];
-    Fallback: ReactElement;
-}
+  routes: Route[];
+  Fallback: ReactElement;
+};
 
-export const Router = ({routes, Fallback}: Props) => {
-    const [url, setUrl] = useState(() =>routerHistory.getUrl());
+export const Router = ({ routes, Fallback }: Props) => {
+  const [url, setUrl] = useState(() => routerHistory.getUrl());
 
-    const routeData = getRouteData(url, routes);
+  const routeData = resolveRoute(url, routes);
 
-    useEffect(() => {
-        const unsubscribe = routerHistory.subscribe(setUrl);
-        
-        return () => unsubscribe();
-    }, []);
+  useEffect(() => {
+    const unsubscribe = routerHistory.subscribe(setUrl);
 
-    if (!routeData) {
-        return Fallback;
-    }
-    
-    return (
-        <RouterProvider params={routeData.params}>
-            {routeData.route.element}
-        </RouterProvider>
-    );
+    return () => unsubscribe();
+  }, []);
+
+  if (!routeData) {
+    return Fallback;
+  }
+
+  return (
+    <RouterProvider params={routeData.params}>
+      {routeData.route.element}
+    </RouterProvider>
+  );
 };

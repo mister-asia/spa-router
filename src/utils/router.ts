@@ -1,55 +1,49 @@
-import {Route} from "@/types";
+import { Route } from "@/types";
 
 export type RouteData = {
-    path: string;
-    params: Record<string, string>;
-    route: Route;
-}
+  path: string;
+  params: Record<string, string>;
+  route: Route;
+};
 
-const matchPath = (path: string, urlParts: string[]) => {
-    const routeParts = path.slice(1).split("/");
+const matchRouteParams = (
+  routePath: string,
+  urlSegments: string[],
+): Record<string, string> | null => {
+  const routeSegments = routePath.slice(1).split("/");
 
-    if (routeParts.length !== urlParts.length) {
-        return false;
+  if (routeSegments.length !== urlSegments.length) return null;
+
+  const params: Record<string, string> = {};
+
+  for (let i = 0; i < routeSegments.length; i++) {
+    const routeSegment = routeSegments[i];
+    const urlSegment = urlSegments[i];
+
+    if (routeSegment.startsWith(":")) {
+      const paramName = routeSegment.slice(1);
+      params[paramName] = urlSegment;
+    } else if (routeSegment !== urlSegment) {
+      return null;
     }
+  }
 
-    let params: Record<string, string> = {};
+  return params;
+};
 
-    for (let i = 0; i < routeParts.length; i++) {
-        const isParam = routeParts[i].startsWith(':');
+export const resolveRoute = (
+  url: string,
+  routes: Route[],
+): RouteData | null => {
+  const urlSegments = url.slice(1).split("/");
 
-        if (isParam) {
-            const name = routeParts[i].slice(1);
-            const value = urlParts[i];
+  for (const route of routes) {
+    const params = matchRouteParams(route.path, urlSegments);
 
-            params[name] = value;
-
-            continue;
-        }
-
-        if (routeParts[i] !== urlParts[i]) {
-            return false;
-        }
+    if (params) {
+      return { path: route.path, params, route };
     }
+  }
 
-    return params;
-}
-
-export const getRouteData = (url: string, routes: Route[]): RouteData | null => {
-    const urlParts = url.slice(1).split("/");
-
-    for (const route of routes) {
-        const params = matchPath(route.path, urlParts);
-
-        if (params) {
-            return {
-                path: route.path,
-                params,
-                route
-            }
-        }
-    }
-
-    return null;
-}
-
+  return null;
+};
