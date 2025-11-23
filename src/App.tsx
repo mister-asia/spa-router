@@ -4,6 +4,7 @@ import { useHistory } from "./hooks/useHistory";
 import { useLocation } from "./hooks/useLocation";
 import { useParams } from "./hooks/useParams";
 import { useQuery } from "./hooks/useQuery";
+import { useSearchParams } from "./hooks/useSearchParams";
 
 const Main = () => {
   const history = useHistory();
@@ -46,6 +47,7 @@ const User = () => {
 };
 
 const Wallet = () => {
+  const [, setSearchParams] = useSearchParams();
   const { userId, walletId } = useParams<{
     userId: string;
     walletId: string;
@@ -68,6 +70,9 @@ const Wallet = () => {
       <button onClick={() => history.forward()}>Forward</button>
       <button onClick={() => history.go(-1)}>Go back</button>
       <button onClick={() => history.go(1)}>Go forward</button>
+      <button onClick={() => setSearchParams({ page: "2" })}>
+        Set page to 2
+      </button>
     </div>
   );
 };
