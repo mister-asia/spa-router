@@ -1,22 +1,28 @@
-type Action = "PUSH" | "REPLACE" | "POP";
+import {
+  HistoryAction,
+  ILocation,
+  IRouterHistory,
+  NavigateOptions,
+} from "./interfaces";
 
-type NavigateOptions = {
-  replace?: boolean;
-  state?: unknown;
-};
+type SubscriptionCallback = (
+  url: string,
+  action: HistoryAction,
+  state?: unknown,
+) => void;
 
-class RouterHistory {
-  subscribers: ((url: string, action: Action, state?: unknown) => void)[] = [];
-  history: History;
+class RouterHistory implements IRouterHistory {
+  private readonly subscribers: SubscriptionCallback[] = [];
+  private readonly history: History;
 
   constructor() {
     this.history = window.history;
-    this.initListeners();
+    this.initializeEventListeners();
     this.patchHistoryMethods();
   }
 
-  navigate(url: string, options: NavigateOptions = {}) {
-    const { replace = false, state = null } = options;
+  navigate(url: string, options?: NavigateOptions): void {
+    const { replace = false, state = null } = options ?? {};
 
     if (replace) {
       this.history.replaceState(state, "", url);
@@ -25,68 +31,86 @@ class RouterHistory {
     }
   }
 
-  getUrl() {
+  getUrl(): string {
     const { pathname, search, hash } = this.getLocation();
     return `${pathname}${search}${hash}`;
   }
 
-  getLocation() {
+  getLocation(): ILocation {
     return {
       pathname: window.location.pathname,
       search: window.location.search,
       hash: window.location.hash,
+      state: this.getHistoryState(),
     };
   }
 
-  back() {
+  back(): void {
     this.history.back();
   }
 
-  forward() {
+  forward(): void {
     this.history.forward();
   }
 
-  go(delta: number) {
+  go(delta: number): void {
     this.history.go(delta);
   }
 
-  subscribe(callback: (url: string, action: Action, state?: unknown) => void) {
+  subscribe(callback: SubscriptionCallback): () => void {
     this.subscribers.push(callback);
 
     return () => {
-      this.subscribers = this.subscribers.filter((cb) => cb !== callback);
+      this.removeSubscriber(callback);
     };
   }
 
-  private patchHistoryMethods() {
-    const originalPushState = this.history.pushState;
-    const originalReplaceState = this.history.replaceState;
-
-    this.history.pushState = (...params) => {
-      originalPushState.call(this.history, ...params);
-      this.notify("PUSH", this.getState());
-    };
-
-    this.history.replaceState = (...params) => {
-      originalReplaceState.call(this.history, ...params);
-      this.notify("REPLACE", this.getState());
-    };
-  }
-
-  private getState() {
-    return this.history.state;
-  }
-
-  private initListeners() {
+  private initializeEventListeners(): void {
     window.addEventListener("popstate", () => {
-      this.notify("POP", this.getState());
+      this.notifySubscribers("POP", this.getHistoryState());
     });
   }
 
-  private notify(action: Action, state?: unknown) {
-    const url = this.getUrl();
+  private patchHistoryMethods(): void {
+    this.patchPushState();
+    this.patchReplaceState();
+  }
 
-    this.subscribers.forEach((cb) => cb(url, action, state));
+  private patchPushState(): void {
+    const originalPushState = this.history.pushState.bind(this.history);
+
+    this.history.pushState = (...params) => {
+      originalPushState(...params);
+      this.notifySubscribers("PUSH", this.getHistoryState());
+    };
+  }
+
+  private patchReplaceState(): void {
+    const originalReplaceState = this.history.replaceState.bind(this.history);
+
+    this.history.replaceState = (...params) => {
+      originalReplaceState(...params);
+      this.notifySubscribers("REPLACE", this.getHistoryState());
+    };
+  }
+
+  private getHistoryState(): unknown {
+    return this.history.state;
+  }
+
+  private notifySubscribers(action: HistoryAction, state?: unknown): void {
+    const currentUrl = this.getUrl();
+
+    this.subscribers.forEach((callback) => {
+      callback(currentUrl, action, state);
+    });
+  }
+
+  private removeSubscriber(callbackToRemove: SubscriptionCallback): void {
+    const index = this.subscribers.indexOf(callbackToRemove);
+    if (index > -1) {
+      this.subscribers.splice(index, 1);
+    }
   }
 }
 

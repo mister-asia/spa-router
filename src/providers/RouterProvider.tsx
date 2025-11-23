@@ -1,24 +1,35 @@
 import { createContext, PropsWithChildren } from "react";
 
-import { RouterHistory } from "@/core/routerHistory";
+import { ILocation, IRouterHistory } from "@/core/interfaces";
 
-type RouterContextType = {
-  params: Record<string, string>;
-  history: RouterHistory;
+type RouteParams = Record<string, string>;
+
+type RouterContextValue = {
+  params: RouteParams;
+  history: IRouterHistory;
+  location: ILocation;
 };
 
-export const RouterContext = createContext<RouterContextType | undefined>(
+export const RouterContext = createContext<RouterContextValue | undefined>(
   undefined,
 );
 
-type Props = PropsWithChildren<{
-  params: Record<string, string>;
-  history: RouterHistory;
-}>;
+type RouterProviderProps = PropsWithChildren<RouterContextValue>;
 
-export const RouterProvider = ({ children, params, history }: Props) => {
+export const RouterProvider = ({
+  children,
+  params,
+  history,
+  location,
+}: RouterProviderProps) => {
+  const contextValue: RouterContextValue = {
+    params,
+    history,
+    location,
+  };
+
   return (
-    <RouterContext.Provider value={{ params, history }}>
+    <RouterContext.Provider value={contextValue}>
       {children}
     </RouterContext.Provider>
   );

@@ -1,6 +1,7 @@
 import { Router } from "@/components/Router";
 
 import { useHistory } from "./hooks/useHistory";
+import { useLocation } from "./hooks/useLocation";
 import { useParams } from "./hooks/useParams";
 
 const Main = () => {
@@ -25,7 +26,9 @@ const Main = () => {
       </button>
       <button
         onClick={() => {
-          history.navigate("/user/123/wallet/456");
+          history.navigate("/user/123/wallet/456?replace=true#44", {
+            state: { from: "main" },
+          });
         }}
       >
         Go to wallet 456 of user 123
@@ -47,6 +50,9 @@ const Wallet = () => {
     walletId: string;
   }>();
   const history = useHistory();
+  const location = useLocation();
+
+  console.log("location", location);
 
   return (
     <div>
