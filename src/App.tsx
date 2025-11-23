@@ -1,29 +1,31 @@
 import { Router } from "@/components/Router";
-import { routerHistory } from "@/core/routerHistory";
 
+import { useHistory } from "./hooks/useHistory";
 import { useParams } from "./hooks/useParams";
 
 const Main = () => {
+  const history = useHistory();
+
   return (
     <div>
       <div>Main</div>
       <button
         onClick={() => {
-          routerHistory.navigate("/login");
+          history.navigate("/login");
         }}
       >
         Go to login
       </button>
       <button
         onClick={() => {
-          routerHistory.navigate("/user/123");
+          history.navigate("/user/123");
         }}
       >
         Go to user 123
       </button>
       <button
         onClick={() => {
-          routerHistory.navigate("/user/123/wallet/456");
+          history.navigate("/user/123/wallet/456");
         }}
       >
         Go to wallet 456 of user 123
@@ -44,16 +46,17 @@ const Wallet = () => {
     userId: string;
     walletId: string;
   }>();
+  const history = useHistory();
 
   return (
     <div>
       <div>
         Wallet {walletId} of user {userId}
       </div>
-      <button onClick={() => routerHistory.back()}>Back</button>
-      <button onClick={() => routerHistory.forward()}>Forward</button>
-      <button onClick={() => routerHistory.go(-1)}>Go back</button>
-      <button onClick={() => routerHistory.go(1)}>Go forward</button>
+      <button onClick={() => history.back()}>Back</button>
+      <button onClick={() => history.forward()}>Forward</button>
+      <button onClick={() => history.go(-1)}>Go back</button>
+      <button onClick={() => history.go(1)}>Go forward</button>
     </div>
   );
 };

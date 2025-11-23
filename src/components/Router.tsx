@@ -28,7 +28,7 @@ export const Router = ({ routes, Fallback }: Props) => {
   }
 
   return (
-    <RouterProvider params={routeData.params}>
+    <RouterProvider params={routeData.params} history={routerHistory}>
       {routeData.route.element}
     </RouterProvider>
   );

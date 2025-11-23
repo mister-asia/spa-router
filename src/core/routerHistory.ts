@@ -91,3 +91,5 @@ class RouterHistory {
 }
 
 export const routerHistory = new RouterHistory();
+
+export type { RouterHistory };
