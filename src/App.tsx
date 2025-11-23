@@ -3,6 +3,7 @@ import { Router } from "@/components/Router";
 import { useHistory } from "./hooks/useHistory";
 import { useLocation } from "./hooks/useLocation";
 import { useParams } from "./hooks/useParams";
+import { useQuery } from "./hooks/useQuery";
 
 const Main = () => {
   const history = useHistory();
@@ -49,6 +50,10 @@ const Wallet = () => {
     userId: string;
     walletId: string;
   }>();
+
+  const query = useQuery();
+  console.log("query", query);
+
   const history = useHistory();
   const location = useLocation();
 
