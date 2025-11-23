@@ -1,4 +1,4 @@
-import { Router } from "@/components/Router";
+import { createBrowserRouter } from "@/core/createBrowserRouter";
 
 import { useHistory } from "./hooks/useHistory";
 import { useLocation } from "./hooks/useLocation";
@@ -70,7 +70,7 @@ const Wallet = () => {
       <button onClick={() => history.forward()}>Forward</button>
       <button onClick={() => history.go(-1)}>Go back</button>
       <button onClick={() => history.go(1)}>Go forward</button>
-      <button onClick={() => setSearchParams({ page: "2" })}>
+      <button onClick={() => setSearchParams({ page: "2" }, { replace: true })}>
         Set page to 2
       </button>
     </div>
@@ -80,15 +80,21 @@ const Wallet = () => {
 const NotFound = () => <div>Custom 404</div>;
 
 export default function App() {
-  return (
-    <Router
-      routes={[
-        { path: "/", element: <Main /> },
-        { path: "/login", element: <Login /> },
-        { path: "/user/:userId", element: <User /> },
-        { path: "/user/:userId/wallet/:walletId", element: <Wallet /> },
-      ]}
-      Fallback={<NotFound />}
-    />
+  return createBrowserRouter(
+    [
+      { path: "/", element: <Main /> },
+      { path: "/login", element: <Login /> },
+      {
+        path: "/user/:userId",
+        element: <User />,
+        children: [
+          {
+            path: "/user/:userId/wallet/:walletId",
+            element: <Wallet />,
+          },
+        ],
+      },
+    ],
+    <NotFound />,
   );
 }
