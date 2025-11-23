@@ -3,7 +3,35 @@ import { routerHistory } from "@/core/routerHistory";
 
 import { useParams } from "./hooks/useParams";
 
-const Main = () => <div>Main</div>;
+const Main = () => {
+  return (
+    <div>
+      <div>Main</div>
+      <button
+        onClick={() => {
+          routerHistory.navigate("/login");
+        }}
+      >
+        Go to login
+      </button>
+      <button
+        onClick={() => {
+          routerHistory.navigate("/user/123");
+        }}
+      >
+        Go to user 123
+      </button>
+      <button
+        onClick={() => {
+          routerHistory.navigate("/user/123/wallet/456");
+        }}
+      >
+        Go to wallet 456 of user 123
+      </button>
+    </div>
+  );
+};
+
 const Login = () => <div>Login</div>;
 
 const User = () => {
@@ -22,13 +50,10 @@ const Wallet = () => {
       <div>
         Wallet {walletId} of user {userId}
       </div>
-      <button
-        onClick={() => {
-          routerHistory.navigate("/user/123");
-        }}
-      >
-        Go to user 123
-      </button>
+      <button onClick={() => routerHistory.back()}>Back</button>
+      <button onClick={() => routerHistory.forward()}>Forward</button>
+      <button onClick={() => routerHistory.go(-1)}>Go back</button>
+      <button onClick={() => routerHistory.go(1)}>Go forward</button>
     </div>
   );
 };

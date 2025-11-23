@@ -1,7 +1,12 @@
 type Action = "PUSH" | "REPLACE" | "POP";
 
+type NavigateOptions = {
+  replace?: boolean;
+  state?: unknown;
+};
+
 class RouterHistory {
-  subscribers: ((url: string, action: Action) => void)[] = [];
+  subscribers: ((url: string, action: Action, state?: unknown) => void)[] = [];
   history: History;
 
   constructor() {
@@ -10,10 +15,47 @@ class RouterHistory {
     this.patchHistoryMethods();
   }
 
-  private initListeners() {
-    window.addEventListener("popstate", () => {
-      this.notify("POP");
-    });
+  navigate(url: string, options: NavigateOptions = {}) {
+    const { replace = false, state = null } = options;
+
+    if (replace) {
+      this.history.replaceState(state, "", url);
+    } else {
+      this.history.pushState(state, "", url);
+    }
+  }
+
+  getUrl() {
+    const { pathname, search, hash } = this.getLocation();
+    return `${pathname}${search}${hash}`;
+  }
+
+  getLocation() {
+    return {
+      pathname: window.location.pathname,
+      search: window.location.search,
+      hash: window.location.hash,
+    };
+  }
+
+  back() {
+    this.history.back();
+  }
+
+  forward() {
+    this.history.forward();
+  }
+
+  go(delta: number) {
+    this.history.go(delta);
+  }
+
+  subscribe(callback: (url: string, action: Action, state?: unknown) => void) {
+    this.subscribers.push(callback);
+
+    return () => {
+      this.subscribers = this.subscribers.filter((cb) => cb !== callback);
+    };
   }
 
   private patchHistoryMethods() {
@@ -22,41 +64,29 @@ class RouterHistory {
 
     this.history.pushState = (...params) => {
       originalPushState.call(this.history, ...params);
-      this.notify("PUSH");
+      this.notify("PUSH", this.getState());
     };
 
     this.history.replaceState = (...params) => {
       originalReplaceState.call(this.history, ...params);
-      this.notify("REPLACE");
+      this.notify("REPLACE", this.getState());
     };
   }
 
-  getUrl() {
-    return (
-      window.location.pathname + window.location.search + window.location.hash
-    );
+  private getState() {
+    return this.history.state;
   }
 
-  navigate(url: string, replace = false) {
-    if (replace) {
-      this.history.replaceState(null, "", url);
-    } else {
-      this.history.pushState(null, "", url);
-    }
+  private initListeners() {
+    window.addEventListener("popstate", () => {
+      this.notify("POP", this.getState());
+    });
   }
 
-  subscribe(callback: (url: string, action: Action) => void) {
-    this.subscribers.push(callback);
-
-    return () => {
-      this.subscribers = this.subscribers.filter((cb) => cb !== callback);
-    };
-  }
-
-  private notify(action: Action) {
+  private notify(action: Action, state?: unknown) {
     const url = this.getUrl();
 
-    this.subscribers.forEach((cb) => cb(url, action));
+    this.subscribers.forEach((cb) => cb(url, action, state));
   }
 }
 
