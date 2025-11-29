@@ -5,13 +5,16 @@ import { useLocation } from "./hooks/useLocation";
 import { useParams } from "./hooks/useParams";
 import { useQuery } from "./hooks/useQuery";
 import { useSearchParams } from "./hooks/useSearchParams";
+import Resize from "./pages/Resize";
+
+import "./index.css";
 
 const Main = () => {
   const history = useHistory();
 
   return (
     <div>
-      <div>Main</div>
+      <div>Main page</div>
       <button
         onClick={() => {
           history.navigate("/login");
@@ -34,6 +37,13 @@ const Main = () => {
         }}
       >
         Go to wallet 456 of user 123
+      </button>
+      <button
+        onClick={() => {
+          history.navigate("/resize/1200");
+        }}
+      >
+        Go to Resize page
       </button>
     </div>
   );
@@ -94,6 +104,7 @@ export default function App() {
           },
         ],
       },
+      { path: "/resize/:minWidth", element: <Resize /> },
     ],
     <NotFound />,
   );
