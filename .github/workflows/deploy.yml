@@ -18,16 +18,19 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install Yarn
+        run: npm install -g yarn
+
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Run tests
-        run: npm run test:run
+        run: yarn test:run
 
-      - name: Build
-        run: npm run build
+      - name: Build project
+        run: yarn build
 
-      - name: Upload build artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist
@@ -38,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download build artifact
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: dist
@@ -62,5 +65,5 @@ jobs:
           source: "dist/*"
           target: ${{ secrets.SSH_PATH }}
 
-      - name: Deployment finished
-        run: echo "OK"
+      - name: Done
+        run: echo "Deployment completed!"
