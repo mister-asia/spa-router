@@ -14,7 +14,7 @@ const Main = () => {
 
   return (
     <div>
-      <div>Main page first auto deploy</div>
+      <div>Main page first auto deploy 1</div>
       <button
         onClick={() => {
           history.navigate("/login");
