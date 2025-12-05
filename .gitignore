@@ -26,3 +26,6 @@ build/
 # Logs
 *.log
 logs/
+
+# Coverage
+coverage/   

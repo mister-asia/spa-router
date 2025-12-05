@@ -268,4 +268,124 @@ describe("resolveRoute", () => {
 
     expect(result).toBeNull();
   });
+
+  it("should handle empty pathname as root path", () => {
+    const routes: Route[] = [
+      {
+        path: "/",
+        element: createMockElement("Root"),
+      },
+    ];
+
+    const result = resolveRoute("", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.path).toBe("/");
+    expect(result?.params).toEqual({});
+  });
+
+  it("should handle pathname without query string and hash", () => {
+    const routes: Route[] = [
+      {
+        path: "/user/:userId",
+        element: createMockElement("User"),
+      },
+    ];
+
+    const result = resolveRoute("/user/123", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.path).toBe("/user/:userId");
+    expect(result?.params).toEqual({ userId: "123" });
+  });
+
+  it("should handle parameter values with special characters", () => {
+    const routes: Route[] = [
+      {
+        path: "/user/:userId",
+        element: createMockElement("User"),
+      },
+    ];
+
+    const result = resolveRoute("/user/user-123_test", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.params).toEqual({ userId: "user-123_test" });
+  });
+
+  it("should handle parameter values with encoded characters", () => {
+    const routes: Route[] = [
+      {
+        path: "/search/:query",
+        element: createMockElement("Search"),
+      },
+    ];
+
+    const result = resolveRoute("/search/hello%20world", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.params).toEqual({ query: "hello%20world" });
+  });
+
+  it("should return correct route element in result", () => {
+    const element = createMockElement("Custom User");
+    const routes: Route[] = [
+      {
+        path: "/user/:userId",
+        element,
+      },
+    ];
+
+    const result = resolveRoute("/user/123", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.route.element).toBe(element);
+  });
+
+  it("should handle route with parameter at the start", () => {
+    const routes: Route[] = [
+      {
+        path: "/:lang/about",
+        element: createMockElement("About"),
+      },
+    ];
+
+    const result = resolveRoute("/en/about", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.params).toEqual({ lang: "en" });
+  });
+
+  it("should handle route with parameter at the end", () => {
+    const routes: Route[] = [
+      {
+        path: "/api/users/:id",
+        element: createMockElement("User API"),
+      },
+    ];
+
+    const result = resolveRoute("/api/users/999", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.params).toEqual({ id: "999" });
+  });
+
+  it("should prioritize more specific routes over generic ones", () => {
+    const routes: Route[] = [
+      {
+        path: "/user/:id",
+        element: createMockElement("Generic User"),
+      },
+      {
+        path: "/user/me",
+        element: createMockElement("My Profile"),
+      },
+    ];
+
+    const result = resolveRoute("/user/me", routes);
+
+    expect(result).not.toBeNull();
+    expect(result?.path).toBe("/user/:id");
+    expect(result?.params).toEqual({ id: "me" });
+  });
 });
