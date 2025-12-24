@@ -18,7 +18,7 @@ const Main = () => {
   useEffect(() => {
     console.log("Main page mounted");
 
-    fetch("localhost:3000/users")
+    fetch("http://94.250.254.251:3000/users")
       .then((response) => response.json())
       .then((json) => console.log(json))
       .catch((error) => console.error(error));
