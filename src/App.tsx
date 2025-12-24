@@ -16,6 +16,8 @@ const Main = () => {
   const history = useHistory();
 
   useEffect(() => {
+    console.log("Main page mounted");
+
     fetch("localhost:3000/users")
       .then((response) => response.json())
       .then((json) => console.log(json))
