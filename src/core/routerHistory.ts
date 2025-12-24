@@ -67,7 +67,7 @@ class RouterHistory implements IRouterHistory {
 
   private initializeEventListeners(): void {
     window.addEventListener("popstate", () => {
-      this.notifySubscribers("POP", this.getHistoryState());
+      //this.notifySubscribers("POP", this.getHistoryState());
     });
   }
 

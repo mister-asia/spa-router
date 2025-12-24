@@ -5,6 +5,7 @@ import { useLocation } from "./hooks/useLocation";
 import { useParams } from "./hooks/useParams";
 import { useQuery } from "./hooks/useQuery";
 import { useSearchParams } from "./hooks/useSearchParams";
+import Exersize from "./pages/Exersize";
 import Resize from "./pages/Resize";
 
 import "./index.css";
@@ -14,7 +15,7 @@ const Main = () => {
 
   return (
     <div>
-      <div>Main page first auto deploy 1</div>
+      <div>Main page first auto deploy 2</div>
       <button
         onClick={() => {
           history.navigate("/login");
@@ -44,6 +45,13 @@ const Main = () => {
         }}
       >
         Go to Resize page
+      </button>
+      <button
+        onClick={() => {
+          history.navigate("/exersize");
+        }}
+      >
+        Go to Exersize page
       </button>
     </div>
   );
@@ -105,6 +113,7 @@ export default function App() {
         ],
       },
       { path: "/resize/:minWidth", element: <Resize /> },
+      { path: "/exersize", element: <Exersize /> },
     ],
     <NotFound />,
   );
