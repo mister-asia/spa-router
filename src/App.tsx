@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { createBrowserRouter } from "@/core/createBrowserRouter";
 
 import { useHistory } from "./hooks/useHistory";
@@ -13,9 +15,16 @@ import "./index.css";
 const Main = () => {
   const history = useHistory();
 
+  useEffect(() => {
+    fetch("localhost:3000/users")
+      .then((response) => response.json())
+      .then((json) => console.log(json))
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
     <div>
-<div>Main</div>
+      <div>Main page first auto deploy 2</div>
       <button
         onClick={() => {
           history.navigate("/login");
