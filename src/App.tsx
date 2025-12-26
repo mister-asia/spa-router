@@ -18,7 +18,7 @@ const Main = () => {
   useEffect(() => {
     console.log("Main page mounted");
 
-    fetch("http://94.250.254.251:3000/users")
+    fetch(`${import.meta.env.VITE_API_URL}/users`)
       .then((response) => response.json())
       .then((json) => console.log(json))
       .catch((error) => console.error(error));

@@ -50,3 +50,5 @@ jobs:
       # ----------- BUILD -----------
       - name: Build project
         run: yarn build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
