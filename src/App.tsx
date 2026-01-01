@@ -18,7 +18,7 @@ const Main = () => {
   useEffect(() => {
     console.log("Main page mounted");
 
-    fetch(`${import.meta.env.VITE_API_URL}/users`)
+    fetch(`api/users`)
       .then((response) => response.json())
       .then((json) => console.log(json))
       .catch((error) => console.error(error));
